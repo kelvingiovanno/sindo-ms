@@ -4,46 +4,53 @@ import {
     HttpCode,
     HttpStatus,
     Post,
-    Res,
+    Req,
+    UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import type { Response } from 'express';
-import { SignInDto } from './auth.dto';
+import type { Request } from 'express';
+import { LocalAuthGuard } from 'src/common/guards/local-auth.guard';
+import { User } from 'generated/prisma/client';
+import { JwtAuthGuard } from 'src/common/guards';
+import type { AuthRequest } from 'src/common/types';
 
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
-    @Post('signin')
+    @UseGuards(JwtAuthGuard)
+    @Post('me')
     @HttpCode(HttpStatus.OK)
-    async signIn(
-        @Res({ passthrough: true }) res: Response,
-        @Body() dto: SignInDto,
-    ) {
-        const action = await this.authService.signIn(
-            dto.username,
-            dto.password,
-        );
-
-        res.cookie('access', action.accessToken, {
-            httpOnly: true,
-            sameSite: 'lax',
-            secure: true,
-        });
-
-        res.cookie('refresh', action.refreshToken, {
-            httpOnly: true,
-            sameSite: 'lax',
-            secure: true,
-        });
-
-        return action.user;
+    me(@Req() req: AuthRequest) {
+        return req.user;
     }
 
+    @UseGuards(LocalAuthGuard)
+    @Post('signin')
+    @HttpCode(HttpStatus.OK)
+    async signin(@Req() req: Request) {
+        const user = req.user;
+        const tokens = await this.authService.generateTokens(user as User);
+
+        return {
+            access_token: tokens.accessToken,
+            refresh_token: tokens.refreshToken,
+        };
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Post('signout')
     @HttpCode(HttpStatus.OK)
-    signOut(@Res() res: Response) {
-        res.clearCookie('access');
-        res.clearCookie('refresh');
+    async logout(@Body('refresh_token') refreshToken: string) {
+        await this.authService.logout(refreshToken);
+    }
+
+    @Post('refresh')
+    @HttpCode(HttpStatus.OK)
+    async refresh(@Body('refresh_token') refreshToken: string) {
+        const accessToken = await this.authService.refresh(refreshToken);
+        return {
+            access_token: accessToken,
+        };
     }
 }

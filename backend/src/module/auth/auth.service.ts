@@ -1,7 +1,10 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UserService } from '../user/user.service';
+import { User } from 'generated/prisma/client';
+import { JwtPayload } from 'src/common/types';
 
 @Injectable()
 export class AuthService {
@@ -9,35 +12,100 @@ export class AuthService {
         private readonly configService: ConfigService,
         private readonly prismaService: PrismaService,
         private readonly jwtService: JwtService,
+        private readonly userService: UserService,
     ) {}
 
-    async signIn(username: string, password: string) {
-        const user = await this.prismaService.user.findUnique({
-            where: { username },
-        });
+    async authenticate(username: string, password: string) {
+        const user = await this.userService.getUserByUsername(username);
 
         if (!user || user.password !== password) {
-            throw new ForbiddenException('Invalid credentials');
+            throw new UnauthorizedException('Invalid credentials');
         }
 
-        const accessToken = await this.jwtService.signAsync(user, {
+        return user;
+    }
+
+    async generateTokens(user: User) {
+        const payload: JwtPayload = {
+            sub: user.id,
+            role: user.role,
+            username: user.username,
+        };
+
+        const accessToken = await this.jwtService.signAsync(payload, {
             secret: this.configService.getOrThrow<string>('JWT_ACCESS_SECRET'),
             expiresIn: this.configService.getOrThrow<number>(
                 'JWT_ACCESS_EXPIRES_IN',
             ),
         });
 
-        const refreshToken = await this.jwtService.signAsync(user, {
+        const refreshExpiresIn = this.configService.getOrThrow<number>(
+            'JWT_REFRESH_EXPIRES_IN',
+        );
+
+        const refreshToken = await this.jwtService.signAsync(payload, {
             secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
-            expiresIn: this.configService.getOrThrow<number>(
-                'JWT_REFRESH_EXPIRES_IN',
-            ),
+            expiresIn: refreshExpiresIn,
+        });
+
+        await this.prismaService.refresh.create({
+            data: {
+                userId: user.id,
+                token: refreshToken,
+                expiresIn: new Date(Date.now() - refreshExpiresIn * 1000),
+            },
         });
 
         return {
             accessToken,
             refreshToken,
-            user,
         };
+    }
+
+    async logout(refreshToken: string) {
+        const token = await this.prismaService.refresh.findUnique({
+            where: { token: refreshToken },
+        });
+
+        if (!token) {
+            throw new UnauthorizedException('Invalid token');
+        }
+
+        await this.prismaService.refresh.delete({
+            where: { token: refreshToken },
+        });
+
+        return { message: 'Logged out successfully' };
+    }
+
+    async refresh(token: string) {
+        try {
+            const payload = await this.jwtService.verifyAsync<JwtPayload>(
+                token,
+                {
+                    secret: this.configService.getOrThrow<string>(
+                        'JWT_REFRESH_SECRET',
+                    ),
+                },
+            );
+
+            const refreshToken = await this.prismaService.refresh.findUnique({
+                where: { token },
+            });
+
+            if (!refreshToken || refreshToken.expiresIn < new Date()) {
+                throw new UnauthorizedException('Invalid or expired token');
+            }
+
+            const accessToken = await this.jwtService.signAsync(payload, {
+                secret: this.configService.getOrThrow<string>(
+                    'JWT_ACCESS_SECRET',
+                ),
+            });
+
+            return accessToken;
+        } catch {
+            throw new UnauthorizedException('Invalid or expired token');
+        }
     }
 }

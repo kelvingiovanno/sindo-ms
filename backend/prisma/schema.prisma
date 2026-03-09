@@ -9,27 +9,32 @@ datasource db {
   provider = "mysql"
 }
 
+enum UserRole {
+  ADMIN
+  STAFF
+  VIEWER
+}
+
 model User {
   id        String   @id @default(uuid())
+  role UserRole @default(VIEWER)
   fullname  String
   username  String   @unique
   password  String
-
-  refreshTokens RefreshToken[]
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  refreshTokens Refresh[]
 }
 
-model RefreshToken {
+model Refresh {
   id        String   @id @default(uuid())
-  hash      String
+  token     String @unique()
   userId    String
-
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   createdAt DateTime @default(now())
-  expiresAt DateTime
+  expiresIn DateTime
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
