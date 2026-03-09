@@ -16,25 +16,44 @@ enum UserRole {
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id String @id @default(uuid())
   role UserRole @default(VIEWER)
-  fullname  String
-  username  String   @unique
-  password  String
+  fullname String
+  username String @unique
+  password String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   refreshTokens Refresh[]
+  storeAccesses StoreAccess[]
 }
 
 model Refresh {
-  id        String   @id @default(uuid())
-  token     String @unique()
-  userId    String
+  id String   @id @default(uuid())
+  token String @unique()
+  userId String
   createdAt DateTime @default(now())
   expiresIn DateTime
   
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model Store {
+  id String @id @default(uuid())
+  name String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  storeAccesses StoreAccess[]
+}
+
+model StoreAccess {
+  storeId String 
+  userId String
+  
+  stores Store @relation(fields: [storeId], references: [id])
+  users User @relation(fields: [userId], references: [id])
+
+  @@id([storeId, userId])
 }
