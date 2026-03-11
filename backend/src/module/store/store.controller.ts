@@ -25,13 +25,13 @@ export class StoreController {
     constructor(private readonly storeService: StoreService) {}
 
     @Roles([UserRole.ADMIN])
-    @Post('create')
+    @Post()
     async createStore(@Body() dto: CreateStoreDto) {
         return this.storeService.createStore(dto.name);
     }
 
     @Roles([UserRole.ADMIN])
-    @Patch('update/:storeId')
+    @Patch(':storeId')
     async updateStore(
         @Param('storeId', ParseUUIDPipe) id: string,
         @Body() dto: UpdateStoreDto,
@@ -40,7 +40,13 @@ export class StoreController {
     }
 
     @Roles([UserRole.ADMIN])
-    @Post('/:storeId/users')
+    @Delete(':storeId')
+    async sofldelete(@Param('storeId', ParseUUIDPipe) storeId: string) {
+        return this.storeService.softDeleteStore(storeId);
+    }
+
+    @Roles([UserRole.ADMIN])
+    @Post(':storeId/users')
     async grantStoreAccess(
         @Param('storeId', ParseUUIDPipe) storeId: string,
         @Body() dto: GrantStoreAccessDto,
@@ -56,7 +62,7 @@ export class StoreController {
     }
 
     @Roles([UserRole.ADMIN])
-    @Delete('/:storeId/users')
+    @Delete(':storeId/users')
     async revokeStoreAccess(
         @Param('storeId', ParseUUIDPipe) storeId: string,
         @Body() dto: RevokeStoreAccessDto,

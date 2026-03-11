@@ -46,6 +46,8 @@ model Store {
   name String @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
   storeAccesses StoreAccess[]
 }
 

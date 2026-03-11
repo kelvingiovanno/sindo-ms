@@ -1,2 +1,2 @@
-export * from './JwtPayload';
+export * from './Payload';
 export * from './AuthRequest';

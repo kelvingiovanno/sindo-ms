@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from '../user/user.service';
 import { User } from 'generated/prisma/client';
-import { JwtPayload } from 'src/common/types';
+import { Payload } from 'src/common/types';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +25,7 @@ export class AuthService {
         return user;
     }
 
-    async me(payload: JwtPayload) {
+    async me(payload: Payload) {
         const user = await this.prismaService.user.findUnique({
             where: { id: payload.sub },
         });
@@ -44,7 +44,7 @@ export class AuthService {
     async login(user: User) {
         const storeIds = await this.userService.getStoreAccess(user.id);
 
-        const payload: JwtPayload = {
+        const payload: Payload = {
             sub: user.id,
             role: user.role,
             username: user.username,
@@ -90,14 +90,11 @@ export class AuthService {
 
     async refresh(token: string) {
         try {
-            const payload = await this.jwtService.verifyAsync<JwtPayload>(
-                token,
-                {
-                    secret: this.configService.getOrThrow<string>(
-                        'JWT_REFRESH_SECRET',
-                    ),
-                },
-            );
+            const payload = await this.jwtService.verifyAsync<Payload>(token, {
+                secret: this.configService.getOrThrow<string>(
+                    'JWT_REFRESH_SECRET',
+                ),
+            });
 
             const refreshToken = await this.prismaService.refresh.findFirst({
                 where: { token },
@@ -128,7 +125,7 @@ export class AuthService {
         }
     }
 
-    private async gAccessToken(payload: JwtPayload): Promise<string> {
+    private async gAccessToken(payload: Payload): Promise<string> {
         return this.jwtService.signAsync(payload, {
             secret: this.configService.getOrThrow<string>('JWT_ACCESS_SECRET'),
             expiresIn: this.configService.getOrThrow<number>(
@@ -137,7 +134,7 @@ export class AuthService {
         });
     }
 
-    private async gRefreshToken(payload: JwtPayload): Promise<string> {
+    private async gRefreshToken(payload: Payload): Promise<string> {
         return await this.jwtService.signAsync(payload, {
             secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
             expiresIn: this.configService.getOrThrow<number>(
