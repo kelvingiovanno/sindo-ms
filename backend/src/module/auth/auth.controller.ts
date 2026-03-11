@@ -38,7 +38,7 @@ export class AuthController {
         @Res({ passthrough: true }) res: Response,
     ) {
         const user = req.user;
-        const tokens = await this.authService.gTokens(user as User);
+        const tokens = await this.authService.login(user as User);
 
         res.cookie('refreshToken', tokens.refreshToken, {
             httpOnly: true,

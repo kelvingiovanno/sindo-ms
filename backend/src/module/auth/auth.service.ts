@@ -41,11 +41,14 @@ export class AuthService {
         return accessToken;
     }
 
-    async gTokens(user: User) {
+    async login(user: User) {
+        const storeIds = await this.userService.getStoreAccess(user.id);
+
         const payload: JwtPayload = {
             sub: user.id,
             role: user.role,
             username: user.username,
+            storeIds: storeIds,
         };
 
         const accessToken = await this.gAccessToken(payload);
@@ -98,17 +101,26 @@ export class AuthService {
 
             const refreshToken = await this.prismaService.refresh.findFirst({
                 where: { token },
+                include: {
+                    user: {
+                        select: {
+                            isRevoked: true,
+                        },
+                    },
+                },
             });
 
             if (!refreshToken || refreshToken.expiresIn < new Date()) {
                 throw new UnauthorizedException('Invalid or expired token');
             }
 
-            const accessToken = await this.jwtService.signAsync(payload, {
-                secret: this.configService.getOrThrow<string>(
-                    'JWT_ACCESS_SECRET',
-                ),
-            });
+            if (refreshToken.user.isRevoked) {
+                throw new UnauthorizedException(
+                    'Account access has been revoked',
+                );
+            }
+
+            const accessToken = await this.gAccessToken(payload);
 
             return accessToken;
         } catch {
