@@ -13,13 +13,18 @@ export class UserService {
         return user;
     }
 
-    async getStoreAccess(userId: string) {
+    async getUserStoreAccessById(userId: string) {
         const user = await this.prismaService.user.findUnique({
             where: { id: userId },
             include: {
                 storeAccesses: {
                     select: {
                         storeId: true,
+                        stores: {
+                            select: {
+                                name: true,
+                            },
+                        },
                     },
                 },
             },
@@ -27,8 +32,11 @@ export class UserService {
 
         if (!user) throw new UnauthorizedException('Unauthorized access');
 
-        const storeIds = user.storeAccesses.map((store) => store.storeId);
+        const stores = user.storeAccesses.map((store) => ({
+            id: store.storeId,
+            name: store.stores.name,
+        }));
 
-        return storeIds;
+        return stores;
     }
 }

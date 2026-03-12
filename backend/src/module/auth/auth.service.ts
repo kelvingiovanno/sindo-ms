@@ -36,39 +36,39 @@ export class AuthService {
         if (user.isRevoked)
             throw new UnauthorizedException('Invalid or revoked account');
 
-        const accessToken = await this.gAccessToken(payload);
+        const accessToken = await this.gAccessToken({
+            sub: payload.sub,
+            username: payload.username,
+            role: payload.role,
+        });
 
         return accessToken;
     }
 
     async login(user: User) {
-        const storeIds = await this.userService.getStoreAccess(user.id);
-
         const payload: Payload = {
             sub: user.id,
             role: user.role,
             username: user.username,
-            storeIds: storeIds,
         };
+
+        const stores = await this.userService.getUserStoreAccessById(user.id);
 
         const accessToken = await this.gAccessToken(payload);
         const refreshToken = await this.gRefreshToken(payload);
-
-        const refreshExpiresIn = this.configService.getOrThrow<number>(
-            'JWT_REFRESH_EXPIRES_IN',
-        );
 
         await this.prismaService.refresh.create({
             data: {
                 userId: user.id,
                 token: refreshToken,
-                expiresIn: new Date(Date.now() - refreshExpiresIn * 1000),
+                expiresIn: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             },
         });
 
         return {
             accessToken,
             refreshToken,
+            stores,
         };
     }
 
@@ -108,7 +108,7 @@ export class AuthService {
             });
 
             if (!refreshToken || refreshToken.expiresIn < new Date()) {
-                throw new UnauthorizedException('Invalid or expired token');
+                throw new UnauthorizedException('Invalid or expired token 2');
             }
 
             if (refreshToken.user.isRevoked) {
@@ -117,11 +117,15 @@ export class AuthService {
                 );
             }
 
-            const accessToken = await this.gAccessToken(payload);
+            const accessToken = await this.gAccessToken({
+                sub: payload.sub,
+                username: payload.username,
+                role: payload.role,
+            });
 
             return accessToken;
         } catch {
-            throw new UnauthorizedException('Invalid or expired token');
+            throw new UnauthorizedException('Invalid or expired token 1');
         }
     }
 

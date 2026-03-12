@@ -11,6 +11,10 @@ export const setAccessToken = (token: string|null) => {
     accessToken = token;
 }
 
+export const getToken = () => {
+    return accessToken;
+}
+
 api.interceptors.request.use((config) => {
     
     if(accessToken) {

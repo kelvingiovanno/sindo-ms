@@ -21,7 +21,7 @@ export class StoreService {
         });
 
         if (!store) {
-            throw new NotFoundException('');
+            throw new NotFoundException('Store not found');
         }
 
         const updated = await this.prismaService.store.update({

@@ -18,7 +18,7 @@ const prisma = new PrismaClient({
 async function main() {
     const passwordHash = 'superadmin123';
 
-    await prisma.user.upsert({
+    const user = await prisma.user.upsert({
         where: {
             username: 'superadmin',
         },
@@ -31,7 +31,54 @@ async function main() {
         },
     });
 
-    console.log('Super admin created');
+    const store1 = await prisma.store.upsert({
+        where: {
+            name: 'Selat Sindo Tractor',
+        },
+        update: {},
+        create: {
+            name: 'Selat Sindo Tractor',
+        },
+    });
+
+    const store2 = await prisma.store.upsert({
+        where: {
+            name: 'Sinergy Engine Part',
+        },
+        update: {},
+        create: {
+            name: 'Sinergy Engine Part',
+        },
+    });
+
+    const store3 = await prisma.store.upsert({
+        where: {
+            name: 'Marine Diesel',
+        },
+        update: {},
+        create: {
+            name: 'Marine Diesel',
+        },
+    });
+
+    await prisma.storeAccess.createMany({
+        data: [
+            {
+                userId: user.id,
+                storeId: store1.id,
+            },
+            {
+                userId: user.id,
+                storeId: store2.id,
+            },
+            {
+                userId: user.id,
+                storeId: store3.id,
+            },
+        ],
+    });
+
+    console.log('seeded');
 }
 
 main()

@@ -1,4 +1,3 @@
-
 import { api, setAccessToken } from "@/shared/lib/api";
 import { AuthContext } from "./AuthContext";
 import React, { useEffect, useState } from "react";
@@ -13,7 +12,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
         const loadUser = async () => {
             try {
-                if(!isAuthenticated) return;
                 const res = await api.post<AuthMeResponse>('auth/me');
                 setAccessToken(res.data.accessToken);
                 setAuthenticated(true)
@@ -32,12 +30,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const login = async (username: string, password: string) => {
 
-        const response = await api.post<AuthLoginResponse>('/auth/signin', {
+        const res = await api.post<AuthLoginResponse>('/auth/signin', {
             username: username,
             password: password,
         });
 
-        setAccessToken(response.data.accessToken);
+        const data = res.data;
+        console.log(data);
+        localStorage.setItem('stores', JSON.stringify(data.stores));
+
+        setAccessToken(data.accessToken);
         setAuthenticated(true);
     }
 

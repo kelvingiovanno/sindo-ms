@@ -23,6 +23,7 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     async me(@Req() req: AuthRequest) {
         const payload = req.user;
+
         const newAccessToken = await this.authService.me(payload);
 
         return {
@@ -38,24 +39,25 @@ export class AuthController {
         @Res({ passthrough: true }) res: Response,
     ) {
         const user = req.user;
-        const tokens = await this.authService.login(user as User);
+        const action = await this.authService.login(user as User);
 
-        res.cookie('refreshToken', tokens.refreshToken, {
+        res.cookie('refreshToken', action.refreshToken, {
             httpOnly: true,
             sameSite: 'lax',
             secure: true,
         });
 
         return {
-            accessToken: tokens.accessToken,
-            refreshToken: tokens.refreshToken,
+            accessToken: action.accessToken,
+            refreshToken: action.refreshToken,
+            stores: action.stores,
         };
     }
 
     @UseGuards(JwtGuard)
     @Post('signout')
     @HttpCode(HttpStatus.OK)
-    async logout(
+    async signout(
         @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
         @Body('refresh_token') refreshToken: string,
@@ -71,7 +73,11 @@ export class AuthController {
 
     @Post('refresh')
     @HttpCode(HttpStatus.OK)
-    async refresh(@Body('refresh_token') refreshToken: string) {
+    async refresh(@Req() req: Request) {
+        const refreshToken = req.cookies.refreshToken as string;
+
+        console.log('refresh token', refreshToken);
+
         const accessToken = await this.authService.refresh(refreshToken);
         return {
             accessToken: accessToken,

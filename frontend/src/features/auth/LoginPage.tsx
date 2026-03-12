@@ -22,7 +22,7 @@ const LoginPage = () => {
             setIsLoading(true);
             await login(username, password);
             toast.success("wellcome back", {position: 'top-center'});
-            navigate('/');
+            navigate('/select-store');
         }
         catch (error){
             
