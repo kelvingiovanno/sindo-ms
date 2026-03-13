@@ -7,9 +7,16 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
+import { StoreAccessModule } from '../store-access/store-access.module';
 
 @Module({
-    imports: [PrismaModule, JwtModule, PassportModule, UserModule],
+    imports: [
+        PrismaModule,
+        JwtModule,
+        PassportModule,
+        UserModule,
+        StoreAccessModule,
+    ],
     controllers: [AuthController],
     providers: [AuthService, LocalStrategy, JwtStrategy],
 })

@@ -1,10 +1,14 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+    ForbiddenException,
+    Injectable,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from '../user/user.service';
-import { User } from 'generated/prisma/client';
 import { Payload } from 'src/common/types';
+import { StoreAccessService } from '../store-access/store-access.service';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +17,7 @@ export class AuthService {
         private readonly prismaService: PrismaService,
         private readonly jwtService: JwtService,
         private readonly userService: UserService,
+        private readonly storeAccessService: StoreAccessService,
     ) {}
 
     async authenticate(username: string, password: string) {
@@ -25,76 +30,86 @@ export class AuthService {
         return user;
     }
 
-    async me(payload: Payload) {
-        const user = await this.prismaService.user.findUnique({
-            where: { id: payload.sub },
-        });
-
-        if (!user)
-            throw new UnauthorizedException('Invalid or revoked account');
-
-        if (user.isRevoked)
-            throw new UnauthorizedException('Invalid or revoked account');
-
-        const accessToken = await this.gAccessToken({
-            sub: payload.sub,
-            username: payload.username,
-            role: payload.role,
-        });
-
-        return accessToken;
+    async login(userId: string) {
+        const stores = await this.storeAccessService.getUserStoreAccess(userId);
+        return stores;
     }
 
-    async login(user: User) {
-        const payload: Payload = {
-            sub: user.id,
-            role: user.role,
-            username: user.username,
-        };
+    async selectStore(storeId: string, userId: string) {
+        const storeAccess = await this.storeAccessService.validateStoreAccess(
+            storeId,
+            userId,
+        );
 
-        const stores = await this.userService.getUserStoreAccessById(user.id);
+        if (!storeAccess) {
+            throw new ForbiddenException('Store access denied');
+        }
+
+        const payload: Payload = {
+            sub: storeAccess.userId,
+            username: storeAccess.users.username,
+            role: storeAccess.users.role,
+            storeId: storeAccess.storeId,
+        };
 
         const accessToken = await this.gAccessToken(payload);
         const refreshToken = await this.gRefreshToken(payload);
 
-        await this.prismaService.refresh.create({
-            data: {
-                userId: user.id,
-                token: refreshToken,
-                expiresIn: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-            },
-        });
-
         return {
             accessToken,
             refreshToken,
-            stores,
+        };
+    }
+
+    async switchStore(storeId: string, userId: string) {
+        const storeAccess = await this.storeAccessService.validateStoreAccess(
+            storeId,
+            userId,
+        );
+
+        if (!storeAccess) {
+            throw new ForbiddenException('Store access denied');
+        }
+
+        const newPayload: Payload = {
+            sub: storeAccess.userId,
+            username: storeAccess.users.username,
+            role: storeAccess.users.role,
+            storeId: storeAccess.storeId,
+        };
+
+        const newAccessToken = await this.gAccessToken(newPayload);
+        const newRefreshToken = await this.gRefreshToken(newPayload);
+
+        return {
+            newAccessToken,
+            newRefreshToken,
         };
     }
 
     async logout(refreshToken: string) {
-        const token = await this.prismaService.refresh.findFirst({
-            where: { token: refreshToken },
-        });
+        try {
+            await this.vRefreshToken(refreshToken);
 
-        if (!token) {
+            const token = await this.prismaService.refresh.findFirst({
+                where: { token: refreshToken },
+            });
+
+            if (!token) {
+                throw new UnauthorizedException('Invalid token');
+            }
+
+            await this.prismaService.refresh.deleteMany({
+                where: { token: refreshToken },
+            });
+        } catch {
             throw new UnauthorizedException('Invalid token');
         }
-
-        await this.prismaService.refresh.deleteMany({
-            where: { token: refreshToken },
-        });
-
-        return { message: 'Logged out successfully' };
     }
 
     async refresh(token: string) {
         try {
-            const payload = await this.jwtService.verifyAsync<Payload>(token, {
-                secret: this.configService.getOrThrow<string>(
-                    'JWT_REFRESH_SECRET',
-                ),
-            });
+            const payload = await this.vRefreshToken(token);
 
             const refreshToken = await this.prismaService.refresh.findFirst({
                 where: { token },
@@ -107,33 +122,27 @@ export class AuthService {
                 },
             });
 
-            if (!refreshToken || refreshToken.expiresIn < new Date()) {
-                throw new UnauthorizedException('Invalid or expired token 2');
+            if (
+                !refreshToken ||
+                refreshToken.expiresIn < new Date() ||
+                refreshToken.user.isRevoked
+            ) {
+                throw new UnauthorizedException('Invalid refresh token');
             }
 
-            if (refreshToken.user.isRevoked) {
-                throw new UnauthorizedException(
-                    'Account access has been revoked',
-                );
-            }
-
-            const accessToken = await this.gAccessToken({
-                sub: payload.sub,
-                username: payload.username,
-                role: payload.role,
-            });
+            const accessToken = await this.gAccessToken(payload);
 
             return accessToken;
         } catch {
-            throw new UnauthorizedException('Invalid or expired token 1');
+            throw new UnauthorizedException('Invalid refresh token');
         }
     }
 
     private async gAccessToken(payload: Payload): Promise<string> {
         return this.jwtService.signAsync(payload, {
             secret: this.configService.getOrThrow<string>('JWT_ACCESS_SECRET'),
-            expiresIn: this.configService.getOrThrow<number>(
-                'JWT_ACCESS_EXPIRES_IN',
+            expiresIn: Number(
+                this.configService.getOrThrow<number>('JWT_ACCESS_EXPIRES_IN'),
             ),
         });
     }
@@ -141,9 +150,24 @@ export class AuthService {
     private async gRefreshToken(payload: Payload): Promise<string> {
         return await this.jwtService.signAsync(payload, {
             secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
-            expiresIn: this.configService.getOrThrow<number>(
-                'JWT_REFRESH_EXPIRES_IN',
+            expiresIn: Number(
+                this.configService.getOrThrow<number>('JWT_REFRESH_EXPIRES_IN'),
             ),
         });
+    }
+
+    private async vRefreshToken(token: string) {
+        const payload = await this.jwtService.verifyAsync<Payload>(token, {
+            secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
+        });
+
+        const newPayload: Payload = {
+            sub: payload.sub,
+            username: payload.username,
+            role: payload.role,
+            storeId: payload.storeId,
+        };
+
+        return newPayload;
     }
 }

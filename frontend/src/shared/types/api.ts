@@ -6,7 +6,7 @@ export type AuthLoginResponse = {
     accessToken: string;
     refreshToken: string;
     stores: {
-        id: string,
-        name: string,
+        storeId: string,
+        storeName: string,
     }[],
 }

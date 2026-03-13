@@ -20,9 +20,13 @@ const LoginPage = () => {
 
         try {
             setIsLoading(true);
-            await login(username, password);
+            const res = await login(username, password);
             toast.success("wellcome back", {position: 'top-center'});
-            navigate('/select-store');
+            navigate('/select-store', {
+                state: {
+                    stores: res,
+                },
+            });
         }
         catch (error){
             

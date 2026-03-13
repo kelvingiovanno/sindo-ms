@@ -10,9 +10,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [isLoading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
+        if (isAuthenticated) return;
         const loadUser = async () => {
             try {
-                const res = await api.post<AuthMeResponse>('auth/me');
+                const res = await api.post<AuthMeResponse>('auth/refresh');
                 setAccessToken(res.data.accessToken);
                 setAuthenticated(true)
             } 
@@ -36,11 +37,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
 
         const data = res.data;
-        console.log(data);
-        localStorage.setItem('stores', JSON.stringify(data.stores));
-
+    
         setAccessToken(data.accessToken);
         setAuthenticated(true);
+        return data;    
     }
 
     const logout = async () => {
