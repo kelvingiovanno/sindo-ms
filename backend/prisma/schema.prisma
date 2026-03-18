@@ -60,3 +60,74 @@ model StoreAccess {
 
   @@id([storeId, userId])
 }
+
+model ProductCategory {
+  id String @id @default(uuid())
+  name String @unique
+  products Product[]
+}
+
+model ProductBrand {
+  id String @id @default(uuid())
+  name String @unique
+  products Product[]
+}
+
+model ProductUnit {
+  id String @id @default(uuid())
+  name String @unique
+  symbol String @unique
+  products Product[]
+}
+
+model Supplier {
+  id String @id @default(uuid())
+  name String
+  phone String @unique
+  email String @unique
+  address String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  products Product[]
+}
+
+model Product {
+  id String @id @default(uuid())
+  storeId String
+  sku String @unique
+  name String
+  partnumber String
+  description String
+  cost Decimal
+  price Decimal
+  categoryId String
+  brandId String
+  unitId String
+  supplierId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  category ProductCategory @relation(fields: [categoryId], references: [id])
+  brand ProductBrand @relation(fields: [brandId], references: [id])
+  unit ProductUnit @relation(fields: [unitId], references: [id])
+  supplier Supplier @relation(fields: [supplierId], references: [id])
+  dimensions ProductDimension[]
+}
+
+model MeasurementUnit {
+  id String @id @default(uuid())
+  name String @unique
+  symbol String @unique
+}
+
+model ProductDimension {
+  id String @id @default(uuid())
+  productId String 
+  measurement String
+  value Decimal
+  unitId String
+  product Product @relation(fields: [productId], references: [id])
+}
