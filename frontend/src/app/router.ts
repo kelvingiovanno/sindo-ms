@@ -10,6 +10,7 @@ import InvoicePage from "@/features/invoice/InvoicePage";
 import ProtectedPage from "./pages/ProtectedPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ErrorPage from "./pages/ErrorPage";
+import ProductPage from "@/features/product/ProductPage";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
               {
                 path: "/invoice",
                 Component: InvoicePage,
+              },
+              {
+                path: "/product",
+                Component: ProductPage,
               },
             ],
           },

@@ -54,7 +54,7 @@ export const sidebarMenu: SidebarMenu[] = [
     icon: Package,
     label: "Products",
     children: [
-      { type: "ITEM", label: "Products", path: "/products" },
+      { type: "ITEM", label: "Products", path: "/product" },
       { type: "ITEM", label: "Categories", path: "/product-categories" },
       { type: "ITEM", label: "Brands", path: "/product-brands" },
       { type: "ITEM", label: "Units", path: "/product-units" },

@@ -51,7 +51,7 @@ export function InvoiceItem({ id, customer, total }: InvoiceItemProps) {
 
 export default function DashboardPage() {
   return (
-    <div className="p-4 pt-22 lg:p-6 space-y-6">
+    <>
 
       {/* Page Title */}
       <div>
@@ -225,6 +225,6 @@ export default function DashboardPage() {
   </table>
 </div>
 
-    </div>
+    </>
   );
 }

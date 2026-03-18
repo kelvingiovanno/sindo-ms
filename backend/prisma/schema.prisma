@@ -102,6 +102,7 @@ model Product {
   description String
   cost Decimal
   price Decimal
+  stock Decimal
   categoryId String
   brandId String
   unitId String

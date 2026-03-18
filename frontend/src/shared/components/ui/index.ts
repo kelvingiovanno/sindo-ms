@@ -5,3 +5,6 @@ export * from "./separator";
 export * from "./spinner";
 export * from "./field";
 export * from "./select";
+export * from "./table";
+export * from "./pagination";
+export * from "./popover";

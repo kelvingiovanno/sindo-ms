@@ -137,6 +137,10 @@ async function main() {
                 faker.number.float({ min: 10, max: 500 }),
             );
 
+            const stock = new Prisma.Decimal(
+                faker.number.int({ min: 30, max: 300 }),
+            );
+
             const price = cost.mul(faker.number.float({ min: 1.2, max: 1.8 }));
 
             return prisma.product.create({
@@ -148,6 +152,7 @@ async function main() {
                     description: faker.commerce.productDescription(),
                     cost,
                     price,
+                    stock: stock,
                     categoryId: category.id,
                     brandId: brand.id,
                     unitId: unit.id,
