@@ -10,9 +10,9 @@ const StatCard = ({
     children 
 }: StatCardProps) => {
     return (
-        <div className="bg-white border border-slate-200 rounded-md p-3">
-            <p className="text-xs text-slate-500">{title}</p>
-            <div className="mt-4">{children}</div>
+        <div className="bg-white border border-slate-200 rounded-md p-6 space-y-2">
+            <p className="text-sm text-slate-500">{title}</p>
+            {children}
         </div>
      );
 }
@@ -28,7 +28,7 @@ const ProductStats = () => {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
         <StatCard title="Total Products">
-            <p className="text-2xl font-semibold text-slate-800">
+            <p className="text-2xl font-semibold text-slate-900">
                 {531}
             </p>
         </StatCard>
@@ -36,7 +36,7 @@ const ProductStats = () => {
         <StatCard title="Inventory Value">
             <div className="flex justify-start items-center gap-2 tabular-nums">
                 <span className="text-slate-400 text-sm">Rp</span>
-                <span className="text-2xl font-semibold text-slate-800">
+                <span className="text-2xl font-semibold text-slate-900">
                     {formatNumber(52983200)}
                 </span>
             </div>

@@ -3,7 +3,7 @@ import { LogOut, Menu } from "lucide-react";
 import SidebarItem from "./components/SidebarItem";
 import SidebarCollapseItem from "./components/SidebarCollapseItem";
 import { sidebarMenu } from "./sidebarMenu";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
 
 
 export const Sidebar = () => {

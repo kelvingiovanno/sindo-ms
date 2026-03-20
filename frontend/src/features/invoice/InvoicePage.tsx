@@ -1,6 +1,7 @@
 import { useState } from "react";
 
-import { Button, Input } from "@/shared/components/ui";
+import { Button } from "@/shared/components/ui/button";
+import { Input } from "@/shared/components/ui/input";
 import { Badge } from "@/shared/components/ui/badge";
 import {
   Table,

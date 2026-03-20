@@ -1,5 +1,7 @@
 import { useAuth } from "@/app/providers/auth";
-import {  Input, Spinner, FieldButton, Field, FieldLabel } from "@/shared/components/ui";
+import { Input } from "@/shared/components/ui/input";
+import { Spinner } from "@/shared/components/ui/spinner";
+import { FieldButton, Field, FieldLabel } from "@/shared/components/ui/field";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";

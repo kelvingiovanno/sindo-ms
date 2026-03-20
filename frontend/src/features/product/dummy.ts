@@ -130,3 +130,67 @@ export const products = [
     status: "Low Stock",
   },
 ];
+
+
+export const categoryOptions = [
+  { label: "Engine Components", value: "engine", count: 124 },
+  { label: "Fuel System", value: "fuel", count: 86 },
+  { label: "Cooling System", value: "cooling", count: 64 },
+  { label: "Lubrication System", value: "lubrication", count: 52 },
+  { label: "Electrical", value: "electrical", count: 91 },
+  { label: "Turbocharger", value: "turbo", count: 37 },
+  { label: "Air Intake", value: "air", count: 43 },
+  { label: "Exhaust System", value: "exhaust", count: 29 },
+  { label: "Filters", value: "filters", count: 110 },
+  { label: "Gasket & Seal", value: "gasket", count: 73 },
+  { label: "Piston & Cylinder", value: "piston", count: 48 },
+  { label: "Bearing & Shaft", value: "bearing", count: 35 },
+  { label: "Pump", value: "pump", count: 57 },
+  { label: "Valve System", value: "valve", count: 41 },
+  { label: "Starter Motor", value: "starter", count: 22 },
+];
+
+export const brandOptions = [
+  { label: "Mitsubishi", value: "mitsubishi", count: 73 },
+  { label: "Yanmar", value: "yanmar", count: 67 },
+  { label: "Caterpillar", value: "caterpillar", count: 59 },
+  { label: "Cummins", value: "cummins", count: 71 },
+  { label: "MAN Diesel", value: "man", count: 33 },
+  { label: "Volvo Penta", value: "volvo_penta", count: 50 },
+  { label: "Perkins", value: "perkins", count: 39 },
+  { label: "Deutz", value: "deutz", count: 21 },
+  { label: "Scania Marine", value: "scania", count: 26 },
+];
+
+export const modelOptions = [
+  { label: "S6R", value: "s6r", brand: "mitsubishi", count: 45 },
+  { label: "S12R", value: "s12r", brand: "mitsubishi", count: 28 },
+  { label: "6LY2", value: "6ly2", brand: "yanmar", count: 22 },
+  { label: "6LY3", value: "6ly3", brand: "yanmar", count: 18 },
+  { label: "4JH", value: "4jh", brand: "yanmar", count: 15 },
+  { label: "TNV Series", value: "tnv", brand: "yanmar", count: 12 },
+  { label: "C9", value: "c9", brand: "caterpillar", count: 20 },
+  { label: "C18", value: "c18", brand: "caterpillar", count: 17 },
+  { label: "3512", value: "3512", brand: "caterpillar", count: 22 },
+  { label: "KTA38", value: "kta38", brand: "cummins", count: 25 },
+  { label: "KTA50", value: "kta50", brand: "cummins", count: 18 },
+  { label: "QSK19", value: "qsk19", brand: "cummins", count: 28 },
+  { label: "D2862", value: "d2862", brand: "man", count: 15 },
+  { label: "D2848", value: "d2848", brand: "man", count: 18 },
+  { label: "D13", value: "d13", brand: "volvo_penta", count: 21 },
+  { label: "D16", value: "d16", brand: "volvo_penta", count: 29 },
+  { label: "4006", value: "4006", brand: "perkins", count: 19 },
+  { label: "4012", value: "4012", brand: "perkins", count: 20 },
+  { label: "BF6M1015", value: "bf6m1015", brand: "deutz", count: 10 },
+  { label: "TCD2015", value: "tcd2015", brand: "deutz", count: 11 },
+  { label: "DI13", value: "di13", brand: "scania", count: 14 },
+  { label: "DI16", value: "di16", brand: "scania", count: 12 },
+];
+
+export const statusOptions = [
+  { label: "In Stock", value: "in_stock", count: 312 },
+  { label: "Low Stock", value: "low_stock", count: 47 },
+  { label: "Out of Stock", value: "out_stock", count: 19 },
+  { label: "Pre Order", value: "preorder", count: 12 },
+  { label: "Discontinued", value: "discontinued", count: 6 },
+];
