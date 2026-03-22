@@ -152,7 +152,7 @@ const ProductFilterMenu = () => {
                         ${
                             filterCount() > 0
                                 ? "bg-slate-200 border-slate-400 text-slate-700"
-                                : "bg-slate-50 border-slate-300 text-slate-700"
+                                : " border-slate-300 text-slate-700"
                         }
                     `}
                     variant={"outline"}
@@ -162,7 +162,7 @@ const ProductFilterMenu = () => {
 
                 {
                     filterCount() > 0 && (
-                        <Badge className="bg-slate-400 text-slate-900 rounded-sm px-1.5">
+                        <Badge>
                             {filterCount()}
                         </Badge>
                     )
@@ -173,8 +173,8 @@ const ProductFilterMenu = () => {
                 <div className="flex w-126 h-100">
                     
                     <div className="p-4 flex-1 flex flex-col justify-between items-start border-r border-slate-300">
-                        <div className="flex flex-col w-full">
-                            <p className="text-xs text-slate-500 px-2 mb-2">Filters</p>
+                        <div className="flex flex-col w-full ">
+                            <p className="text-xs text-slate-500 px-2">Filter by</p>
                             {
                                 [
                                     { key: "brand", label: "Brand" },
@@ -184,16 +184,14 @@ const ProductFilterMenu = () => {
                                 ].map((item) => (
                                     <button
                                         key={item.key} 
-                                        className={`cursor-pointer flex justify-between items-center px-3 h-9 text-left text-sm text-slate-700 hover:bg-slate-200 ${active === item.key ? "border-l-2 border-slate-500 bg-slate-300 text-slate-900" : "border-l-2 border-white"}`}
+                                        className={`rounded-xs cursor-pointer flex justify-between items-center px-3 h-9 text-left text-sm text-slate-700 hover:bg-slate-100 ${active === item.key ? " bg-slate-200 text-slate-900" : ""}`}
                                         onClick={() => setActive(item.key as ActiveFilter)}
                                     >
                                         {item.label}
 
                                         {
                                             map[item.key as ActiveFilter][0].length > 0 && (
-                                                <Badge
-                                                    className="bg-slate-400 text-slate-900 rounded-sm px-1.5"
-                                                >
+                                                <Badge >
                                                     {
                                                         map[item.key as ActiveFilter][0].length
                                                     }
@@ -214,7 +212,7 @@ const ProductFilterMenu = () => {
                     </div>
 
                     <div className="p-4 flex-1 flex flex-col gap-3">
-                        <div className="relative flex items-center border border-slate-300 rounded px-3 h-9 bg-slate-50">
+                        <div className="relative flex items-center border border-slate-300 rounded px-3 h-9">
                             <input
                                 className="w-full outline-none text-sm text-slate-700 pr-6 placeholder:text-sm placeholder:text-slate-500"
                                 placeholder={`Search ${active}...`}
@@ -222,15 +220,14 @@ const ProductFilterMenu = () => {
                             />
                             <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
                         </div>
-                        <div className="flex-1 overflow-y-auto  text-sm text-slate-700">
+                        <div className="flex-1 overflow-y-auto text-sm text-slate-700">
                             {
                                 filter.map((item) => (
                                     <div 
                                         key={item.value}
-                                        className="flex items-center gap-3 pl-2 hover:bg-slate-200 h-8"
+                                        className="flex items-center gap-3 pl-2 hover:bg-slate-100 h-8"
                                     >
                                         <Checkbox 
-                                            className="rounded-xs data-[state=checked]:bg-slate-700 data-[state=checked]:border-slate-700 p-1"
                                             id={item.label}
                                             checked={check(item.label)}
                                             onCheckedChange={() => {toggleSelect(item.label)}}

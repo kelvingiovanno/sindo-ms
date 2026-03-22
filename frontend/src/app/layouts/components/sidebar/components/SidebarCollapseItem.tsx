@@ -21,7 +21,7 @@ const SidebarCollapseItem = ({
     <div className="space-y-1">
       <button
         onClick={onToggle}
-        className="cursor-pointer flex w-full items-center justify-between p-3 rounded-sm text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors"
+        className="cursor-pointer flex w-full items-center justify-between p-3 rounded-sm text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors"
       >
         <div className="flex items-center gap-3">
           <Icon size={18} />
