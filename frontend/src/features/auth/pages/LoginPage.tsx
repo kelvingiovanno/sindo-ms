@@ -1,4 +1,4 @@
-import { useAuth } from "@/app/providers/auth";
+import { useAuth } from "@/app/providers";
 import { Input } from "@/shared/components/ui/input";
 import { Spinner } from "@/shared/components/ui/spinner";
 import { Field, FieldLabel } from "@/shared/components/ui/field";

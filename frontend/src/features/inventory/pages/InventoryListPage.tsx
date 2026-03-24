@@ -1,8 +1,8 @@
 import { Button } from "@/shared/components/ui/button";
-import ProductTable from "./components/ProductTable";
-import { InventoryStatusBar } from "./components/InventoryStatusBar";
+import ProductTable from "../inventory/components/InventoryTable";
+import { InventoryStatusBar } from "../inventory/components/InventoryStatusBar";
 import ProductFilterMenu from "./components/ProductFilter";
-import InventorySort from "./components/InventorySort";
+import InventorySort from "../inventory/components/InventorySort";
 import SearchBar from "@/shared/components/common/SearchBar";
 import Pangination from "@/shared/components/common/Pangination";
 

@@ -1,4 +1,4 @@
-import { useAuth } from "@/app/providers/auth";
+import { useAuth } from "@/app/providers";
 import { Store as StoreIcon } from "lucide-react";
 import { Navigate, useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";

@@ -1,16 +1,16 @@
 export type LoginApiResponse = {
-    userId: string,
+    userId: string;
     stores: {
-        storeId: string,
-        storeName: string,
-    }[],
-}
+        storeId: string;
+        storeName: string;
+    }[];
+};
 
 export type RefreshApiResponse = {
-    accessToken: string,
-}
+    accessToken: string;
+};
 
 export type SelecStoreApiResponse = {
-    accessToken: string,
-    refreshToken: string,
-}
+    accessToken: string;
+    refreshToken: string;
+};

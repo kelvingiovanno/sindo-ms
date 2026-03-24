@@ -9,7 +9,7 @@ type Order = "asc" | "desc" | "";
 
 const InventorySort = () => {
 
-    const [searchParams,setSearchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
 
 
     const [sort, setSort] = useState<Sort>(() => {
