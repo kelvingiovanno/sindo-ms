@@ -9,11 +9,11 @@ import {
 import { formatNumber } from '@/shared/lib';
 import { Eye } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
-import type { InventoryListItem } from '../types/inventory-list.type';
+import type { InventoryItem } from '../types/inventory-list.type';
 import { useNavigate } from 'react-router';
 
 type Props = {
-    inventories: InventoryListItem[];
+    inventories: InventoryItem[];
     isLoading: boolean;
 };
 
@@ -86,7 +86,7 @@ const InventoryTable = ({ inventories, isLoading }: Props) => {
                         inventories.map((inventory) => (
                             <TableRow
                                 key={inventory.sku}
-                                className="hover:bg-slate-100 text-sm text-slate-700"
+                                className="hover:bg-slate-100 text-xs text-slate-700"
                             >
                                 <TableCell className="pl-4">
                                     {inventory.sku}

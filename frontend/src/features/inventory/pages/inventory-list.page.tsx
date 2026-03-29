@@ -43,55 +43,57 @@ const InventoryListPage = () => {
                 </div>
             </div>
 
-            <InventoryStats />
+            <div className="space-y-4">
+                <InventoryStats />
 
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex flex-col gap-2 w-full sm:flex-row sm:items-center sm:flex-wrap">
-                    <div className="w-full sm:w-auto">
-                        <SearchBar placeholder="Search inventory" />
-                    </div>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-col gap-2 w-full sm:flex-row sm:items-center sm:flex-wrap">
+                        <div className="w-full sm:w-auto">
+                            <SearchBar placeholder="Search inventory" />
+                        </div>
 
-                    <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
-                        <InventoryFilterMenu />
-                        <InventorySortMenu />
+                        <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+                            <InventoryFilterMenu />
+                            <InventorySortMenu />
 
-                        <div className="ml-auto sm:hidden">
-                            <Button variant="default">Add Inventory</Button>
+                            <div className="ml-auto sm:hidden">
+                                <Button variant="default">Add Inventory</Button>
+                            </div>
                         </div>
                     </div>
+
+                    <div className="hidden sm:flex shrink-0">
+                        <Button variant="default">Add Inventory</Button>
+                    </div>
                 </div>
 
-                <div className="hidden sm:flex shrink-0">
-                    <Button variant="default">Add Inventory</Button>
-                </div>
+                <InventoryTable
+                    inventories={data?.data ?? []}
+                    isLoading={isLoading}
+                />
+
+                <Pangination
+                    page={Number(page)}
+                    row={Number(row)}
+                    totalPages={data?.meta.totalPage ?? 0}
+                    onPageChange={function (page: number): void {
+                        const params = new URLSearchParams(searchParams);
+                        params.set('page', page.toString());
+                        setPage(page.toString());
+                        setSearchParams(params);
+                    }}
+                    onRowChange={(row: number, page: number = 1) => {
+                        const params = new URLSearchParams(searchParams);
+                        params.set('row', row.toString());
+                        params.set('page', page.toString());
+
+                        setRow(row.toString());
+                        setPage(page.toString());
+                        setSearchParams(params);
+                    }}
+                    isLoading={isLoading}
+                />
             </div>
-
-            <InventoryTable
-                inventories={data?.data ?? []}
-                isLoading={isLoading}
-            />
-
-            <Pangination
-                page={Number(page)}
-                row={Number(row)}
-                totalPages={data?.meta.totalPage ?? 0}
-                onPageChange={function (page: number): void {
-                    const params = new URLSearchParams(searchParams);
-                    params.set('page', page.toString());
-                    setPage(page.toString());
-                    setSearchParams(params);
-                }}
-                onRowChange={(row: number, page: number = 1) => {
-                    const params = new URLSearchParams(searchParams);
-                    params.set('row', row.toString());
-                    params.set('page', page.toString());
-
-                    setRow(row.toString());
-                    setPage(page.toString());
-                    setSearchParams(params);
-                }}
-                isLoading={isLoading}
-            />
         </>
     );
 };

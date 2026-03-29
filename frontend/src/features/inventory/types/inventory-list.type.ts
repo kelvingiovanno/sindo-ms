@@ -1,4 +1,4 @@
-export interface InventoryListItem {
+export interface InventoryItem {
     id: string;
     sku: string;
     brand: string;
@@ -12,9 +12,9 @@ export interface InventoryListItem {
 }
 
 export interface InventoryList {
-    data: InventoryListItem[];
+    data: InventoryItem[];
     meta: {
-        pagae: number;
+        page: number;
         row: number;
         total: number;
         totalPage: number;

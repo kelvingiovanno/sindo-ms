@@ -101,7 +101,7 @@ model Supplier {
 
 enum InventoryStatus {
   IN_STOCK
-  OUT_OF_STOCK
+  OUT_OF_STOCK 
   LOW_STOCK
   DISCONTINUED
 }

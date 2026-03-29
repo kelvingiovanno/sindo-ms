@@ -63,9 +63,8 @@ const Pangination = ({
                 isLoading ? 'opacity-60 animate-pulse pointer-events-none' : ''
             }`}
         >
-            {/* LEFT: Rows per page */}
             <div className="flex items-center justify-between sm:justify-start gap-2">
-                <span className="text-sm text-slate-500 whitespace-nowrap">
+                <span className="text-xs text-slate-500 whitespace-nowrap">
                     Rows per page:
                 </span>
 
@@ -77,17 +76,27 @@ const Pangination = ({
                     }}
                 >
                     <SelectTrigger
-                        className={`w-20 ${
+                        className={`text-xs ${
                             isLoading ? 'opacity-50 cursor-not-allowed' : ''
                         }`}
+                        size="sm"
                     >
                         <SelectValue />
                     </SelectTrigger>
 
-                    <SelectContent>
-                        <SelectItem value="10">10</SelectItem>
-                        <SelectItem value="25">25</SelectItem>
-                        <SelectItem value="50">50</SelectItem>
+                    <SelectContent
+                        className="min-w-(--radix-select-trigger-width)"
+                        position='popper'
+                    >
+                        <SelectItem className="text-xs" value="10">
+                            10
+                        </SelectItem>
+                        <SelectItem className="text-xs" value="25">
+                            25
+                        </SelectItem>
+                        <SelectItem className="text-xs" value="50">
+                            50
+                        </SelectItem>
                     </SelectContent>
                 </Select>
             </div>
@@ -100,7 +109,7 @@ const Pangination = ({
                         <PaginationItem>
                             <PaginationPrevious
                                 href="#"
-                                className={`${
+                                className={`text-xs ${
                                     isLoading
                                         ? 'opacity-50 cursor-not-allowed'
                                         : ''
@@ -120,7 +129,7 @@ const Pangination = ({
                                 <PaginationLink
                                     href="#"
                                     isActive={p === page}
-                                    className={`${
+                                    className={`text-xs ${
                                         isLoading
                                             ? 'opacity-50 cursor-not-allowed'
                                             : ''
@@ -141,7 +150,7 @@ const Pangination = ({
                         <PaginationItem>
                             <PaginationNext
                                 href="#"
-                                className={`${
+                                className={`text-xs ${
                                     isLoading
                                         ? 'opacity-50 cursor-not-allowed'
                                         : ''
@@ -162,7 +171,7 @@ const Pangination = ({
                     {isLoading && (
                         <span className="h-3 w-3 rounded-full border-2 border-slate-400 border-t-transparent animate-spin" />
                     )}
-                    Page {page} of {totalPages}
+                    Showing {page * row - row + 1} - {page * row} of {totalPages}
                 </span>
             </div>
         </div>

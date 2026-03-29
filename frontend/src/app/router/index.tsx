@@ -8,6 +8,7 @@ import DashboardPage from '@/features/dashboard/pages/DashboardPage';
 import InvoicePage from '@/features/invoice/pages/InvoicePage';
 import InventoryListPage from '@/features/inventory/pages/inventory-list.page';
 import InventoryDetailPage from '@/features/inventory/pages/inventory-detail.page';
+import CategoryPage from '@/features/category/pages/category.page';
 
 const router = createBrowserRouter([
     {
@@ -57,6 +58,16 @@ const router = createBrowserRouter([
                             {
                                 path: ':inventoryId',
                                 Component: InventoryDetailPage,
+                            },
+                        ],
+                    },
+                    {
+                        path: 'categories',
+                        element: <RoleGuard roles={['ADMIN']} />,
+                        children: [
+                            {
+                                index: true,
+                                Component: CategoryPage,
                             },
                         ],
                     },
