@@ -152,21 +152,24 @@ const InventoryInformation = ({
                             </p>
 
                             <div className="flex flex-wrap gap-2">
-                                {isLoading
-                                    ? Array.from({ length: 4 }).map((_, i) => (
-                                          <div
-                                              key={i}
-                                              className="h-4 w-15 bg-slate-200 rounded animate-pulse"
-                                          />
-                                      ))
-                                    : data.models.map((item, i) => (
-                                          <Badge
-                                              key={i}
-                                              className="bg-zinc-800"
-                                          >
-                                              {item}
-                                          </Badge>
-                                      ))}
+                                {isLoading ? (
+                                    Array.from({ length: 4 }).map((_, i) => (
+                                        <div
+                                            key={i}
+                                            className="h-4 w-15 bg-slate-200 rounded animate-pulse"
+                                        />
+                                    ))
+                                ) : data.models.length === 0 ? (
+                                    <span className="text-slate-500 text-xs mt-1">
+                                        No models
+                                    </span>
+                                ) : (
+                                    data.models.map((item, i) => (
+                                        <Badge key={i} className="bg-zinc-800">
+                                            {item}
+                                        </Badge>
+                                    ))
+                                )}
                             </div>
                         </div>
                         <div className="bg-slate-50 rounded-sm p-4 border border-slate-300">
@@ -174,21 +177,24 @@ const InventoryInformation = ({
                                 Measurements
                             </p>
                             <div className="flex flex-wrap gap-2">
-                                {isLoading
-                                    ? Array.from({ length: 4 }).map((_, i) => (
-                                          <div
-                                              key={i}
-                                              className="h-4 w-15 bg-slate-200 rounded animate-pulse"
-                                          />
-                                      ))
-                                    : data.measurements.map((item, i) => (
-                                          <Badge
-                                              key={i}
-                                              className="bg-zinc-800"
-                                          >
-                                              {item}
-                                          </Badge>
-                                      ))}
+                                {isLoading ? (
+                                    Array.from({ length: 4 }).map((_, i) => (
+                                        <div
+                                            key={i}
+                                            className="h-4 w-15 bg-slate-200 rounded animate-pulse"
+                                        />
+                                    ))
+                                ) : data.measurements.length === 0 ? (
+                                    <span className="text-slate-500 text-xs mt-1">
+                                        No measurements
+                                    </span>
+                                ) : (
+                                    data.measurements.map((item, i) => (
+                                        <Badge key={i} className="bg-zinc-800">
+                                            {item}
+                                        </Badge>
+                                    ))
+                                )}
                             </div>
                         </div>
                     </div>

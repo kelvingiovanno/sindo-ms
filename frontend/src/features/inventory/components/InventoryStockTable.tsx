@@ -7,8 +7,6 @@ import {
     TableRow,
 } from '@/shared/components/ui/table';
 import type { StockItem } from '../types/Inventory-stock-list.type';
-import { Button } from '@/shared/components/ui/button';
-import { Edit3, Trash2 } from 'lucide-react';
 
 const InventoryStockTable = ({
     data,
@@ -31,31 +29,28 @@ const InventoryStockTable = ({
                         <TableHead className="pl-4 text-left text-slate-500">
                             Code
                         </TableHead>
-                        <TableHead className="text-center text-slate-500">
+                        <TableHead className="text-left text-slate-500">
                             Date
                         </TableHead>
 
-                        <TableHead className="text-center text-slate-500">
+                        <TableHead className="text-left text-slate-500">
                             Reference
                         </TableHead>
 
-                        <TableHead className="text-center text-slate-500">
+                        <TableHead className="text-left text-slate-500">
                             IN
                         </TableHead>
 
-                        <TableHead className="text-center text-slate-500">
+                        <TableHead className="text-left text-slate-500">
                             OUT
                         </TableHead>
 
-                        <TableHead className="text-center text-slate-500">
+                        <TableHead className="text-left text-slate-500">
                             Balance
                         </TableHead>
 
                         <TableHead className="text-left text-slate-500">
                             Description
-                        </TableHead>
-                        <TableHead className="pr-4 text-center text-slate-500">
-                            Actions
                         </TableHead>
                     </TableRow>
                 </TableHeader>
@@ -87,45 +82,27 @@ const InventoryStockTable = ({
                                     key={index}
                                     className="hover:bg-slate-100 text-xs"
                                 >
-                                    <TableCell className="pl-4  text-slate-700">
+                                    <TableCell className="text-left text-slate-700 pl-4">
                                         {item.code}
                                     </TableCell>
-                                    <TableCell className="text-center text-slate-700">
+                                    <TableCell className="text-left text-slate-700">
                                         {item.date}
                                     </TableCell>
-                                    <TableCell className="text-center text-slate-700">
+                                    <TableCell className="text-left text-slate-700">
                                         {item.reference}
                                     </TableCell>
-                                    <TableCell className="text-center  text-green-600">
+                                    <TableCell className="text-left  text-green-600">
                                         {item.in ? `${item.in} ${unit}` : '-'}
                                     </TableCell>
 
-                                    <TableCell className="text-center  text-red-600">
+                                    <TableCell className="text-left  text-red-600">
                                         {!item.in ? `${item.out} ${unit}` : '-'}
                                     </TableCell>
-                                    <TableCell className="text-center text-slate-700">
+                                    <TableCell className="text-left text-slate-700">
                                         {`${item.balance} ${unit}`}
                                     </TableCell>
-                                    <TableCell className=" text-slate-700 ">
+                                    <TableCell className="text-left text-slate-700 pr-4">
                                         {item.description}
-                                    </TableCell>
-                                    <TableCell className="pr-4">
-                                        <div className="flex justify-center items-center gap-2">
-                                            <Button
-                                                variant={'outline'}
-                                                size={'icon-xs'}
-                                                className="rounded"
-                                            >
-                                                <Edit3 size={16} />
-                                            </Button>
-                                            <Button
-                                                variant={'destructive'}
-                                                size={'icon-xs'}
-                                                className="rounded"
-                                            >
-                                                <Trash2 size={16} />
-                                            </Button>
-                                        </div>
                                     </TableCell>
                                 </TableRow>
                             );

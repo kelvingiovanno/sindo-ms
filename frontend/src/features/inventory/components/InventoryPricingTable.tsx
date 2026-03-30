@@ -39,22 +39,22 @@ const InventoryPricingTable = ({
                         <TableHead className="text-left text-slate-500">
                             Customer
                         </TableHead>
-                        <TableHead className="text-center text-slate-500">
+                        <TableHead className="text-left text-slate-500">
                             Price
                         </TableHead>
-                        <TableHead className="text-center text-slate-500">
+                        <TableHead className="text-left text-slate-500">
                             Min Qty
                         </TableHead>
-                        <TableHead className="text-center text-slate-500">
+                        <TableHead className="text-left text-slate-500">
                             Start Date
                         </TableHead>
-                        <TableHead className="pr-4 text-center text-slate-500">
+                        <TableHead className="text-left text-slate-500">
                             End Date
                         </TableHead>
-                        <TableHead className="pr-4 text-center text-slate-500">
+                        <TableHead className="text-center text-slate-500">
                             Status
                         </TableHead>
-                        <TableHead className="pr-4 text-center text-slate-500">
+                        <TableHead className="text-center text-slate-500 pr-4">
                             Actions
                         </TableHead>
                     </TableRow>
@@ -100,18 +100,18 @@ const InventoryPricingTable = ({
                                     <TableCell className="text-left text-slate-700">
                                         {item.customer}
                                     </TableCell>
-                                    <TableCell className="text-right text-slate-700">
+                                    <TableCell className="text-left text-slate-700">
                                         {formatCurrencyIDR(item.specialPrice)}
                                     </TableCell>
-                                    <TableCell className="text-center text-slate-700">
+                                    <TableCell className="text-left text-slate-700">
                                         {item.minQty
                                             ? `${item.minQty} ${unit}`
                                             : `- ${unit}`}
                                     </TableCell>
-                                    <TableCell className="text-center text-slate-700">
+                                    <TableCell className="text-left text-slate-700">
                                         {item.startDate}
                                     </TableCell>
-                                    <TableCell className="text-center text-slate-700">
+                                    <TableCell className="text-left text-slate-700">
                                         {item.endDate ?? '-'}
                                     </TableCell>
                                     <TableCell className="text-center text-slate-700">

@@ -12,7 +12,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/shared/components/ui/alert-dialog';
-import { Trash2 } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 import InventoryStockTable from '../components/InventoryStockTable';
 import InventorySupplierTable from '../components/InventorySupplierTable';
 import InventoryInformation from '../components/InventoryInformation';
@@ -38,7 +38,10 @@ const InventoryDetailPage = () => {
                     <p className="text-xl font-semibold text-slate-900">
                         Stock Movement
                     </p>
-                    <Button variant={'outline'}>Edit Inventory</Button>
+                    <Button variant={'outline'}>
+                        <Edit />
+                        Edit Inventory
+                    </Button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <InventoryImageCarousel
@@ -56,7 +59,7 @@ const InventoryDetailPage = () => {
                             category: 'Hydraulics',
                             type: 'Pump',
                             unit: 'PCS',
-                            status: 'IN STOCK',
+                            status: 'IN_STOCK',
                             lowStockAlert: '10',
                             location: 'Warehouse A - Rack 3',
                             cost: 1500000,
@@ -71,12 +74,9 @@ const InventoryDetailPage = () => {
                 </div>
             </div>
             <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                    <p className="text-xl font-semibold text-slate-900">
-                        Stock Movement
-                    </p>
-                    <Button>Add Stock</Button>
-                </div>
+                <p className="text-xl font-semibold text-slate-900">
+                    Stock Movement
+                </p>
                 <div className="space-y-4">
                     <InventoryItemStats
                         currentStock={0}
@@ -296,7 +296,7 @@ const InventoryDetailPage = () => {
                             code: 'PRC-001',
                             customerCode: 'CUST001',
                             customer: 'PT Sinar Abadi',
-                            specialPrice: '10000',
+                            specialPrice: 10000,
                             minQty: 1,
                             startDate: '2026-01-01',
                             endDate: '2026-12-31',
@@ -306,7 +306,7 @@ const InventoryDetailPage = () => {
                             code: 'PRC-002',
                             customerCode: 'CUST002',
                             customer: 'CV Maju Jaya',
-                            specialPrice: '8500',
+                            specialPrice: 8500,
                             minQty: 5,
                             startDate: '2025-01-01',
                             endDate: '2025-12-31',
@@ -316,7 +316,7 @@ const InventoryDetailPage = () => {
                             code: 'PRC-003',
                             customerCode: 'CUST003',
                             customer: 'UD Berkah Sentosa',
-                            specialPrice: '12000',
+                            specialPrice: 12000,
                             minQty: 2,
                             startDate: '2026-03-01',
                             endDate: '2026-09-30',
@@ -326,7 +326,7 @@ const InventoryDetailPage = () => {
                             code: 'PRC-004',
                             customerCode: 'CUST004',
                             customer: 'PT Nusantara Trading',
-                            specialPrice: '9500',
+                            specialPrice: 9500,
                             minQty: 10,
                             startDate: '2024-06-01',
                             endDate: '2025-06-01',
@@ -336,7 +336,7 @@ const InventoryDetailPage = () => {
                             code: 'PRC-005',
                             customerCode: 'CUST005',
                             customer: 'CV Sejahtera Makmur',
-                            specialPrice: '11000',
+                            specialPrice: 11000,
                             minQty: 3,
                             startDate: '2026-02-15',
                             endDate: '2026-11-30',

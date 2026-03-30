@@ -88,19 +88,19 @@ const InventorySupplierTable = ({
                                     key={index}
                                     className="hover:bg-slate-100 text-xs"
                                 >
-                                    <TableCell className="pl-4  text-slate-700">
+                                    <TableCell className="text-left text-slate-700 pl-4 ">
                                         {item.code}
                                     </TableCell>
-                                    <TableCell className=" text-slate-700">
+                                    <TableCell className="text-left text-slate-700">
                                         {item.supplier}
                                     </TableCell>
-                                    <TableCell className="text-right text-slate-700">
+                                    <TableCell className="text-left text-slate-700">
                                         {formatCurrencyIDR(item.price)}
                                     </TableCell>
-                                    <TableCell className="text-center text-slate-700">
+                                    <TableCell className="text-left text-slate-700">
                                         {item.lastPurchase}
                                     </TableCell>
-                                    <TableCell className="text-right text-slate-700">
+                                    <TableCell className="text-left text-slate-700">
                                         {formatCurrencyIDR(item.totalPurchase)}
                                     </TableCell>
                                     <TableCell className="text-center text-slate-700">

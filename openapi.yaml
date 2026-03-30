@@ -1,0 +1,68 @@
+openapi: 3.0.0
+info:
+  title: Sindo MS API
+  version: 1.0.0
+
+tags: 
+  - name: Inventory
+
+components:
+  schemas:
+    NotFound:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+        message:
+          type: string
+        error:
+          type: string
+
+    Unauthorized:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+        message:
+          type: string
+
+paths:
+  /inventories/{inventoryId}:
+    get:
+      tags:
+        - Inventory
+      parameters:
+        - name: inventoryId
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Returen Inventory information
+                
+        '401':
+          description: Missing or invalid accessToken cookie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                {
+                  "statusCode": 401,
+                  "message": "Unauthorized",
+                } 
+        '404':
+          description: Inventory resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              example:
+                {
+                  "message": "Inventory resource not found",
+                  "statusCode": 404,
+                  "error": "Not found"
+                }
+            
