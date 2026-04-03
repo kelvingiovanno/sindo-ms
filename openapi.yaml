@@ -3,7 +3,12 @@ info:
   title: Sindo MS API
   version: 1.0.0
 
+servers:
+  - url: http://localhost:3000/api
+
 tags: 
+  - name: Auth
+  - name: Store
   - name: Inventory
 
 components:
@@ -13,7 +18,7 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    NotFound:
+    ErrorResponse:
       type: object
       properties:
         statusCode:
@@ -22,53 +27,352 @@ components:
           type: string
         error:
           type: string
-    Unauthorized:
-      type: object
-      properties:
-        statusCode:
-          type: integer
-        message:
-          type: string
-
 paths:
-  /inventories/{inventoryId}:
+  /auth/test:
     get:
       tags:
-        - Inventory
-      security:
-        - BearerAuth: []
+        - Auth
+      summary: Test endpoint
+      description: Returns a simple hello world message.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: hello world
+  /auth/sign-in:
+    post:
+      tags:
+        - Auth
+      summary: User sign-in
+      description: Authenticates a user using credentials and returns an access token along with user details and associated stores.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: kelvingiovanno
+                password:
+                  type: string
+                  example: kelvin123123
+      responses:
+        '200':
+          description: Login successful.
+          headers:
+            Set-Cookie:
+              description: HTTP-only cookie containing the refresh token.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: JWT access token used for authenticated requests.
+                    example: jwt-access-token-abc123
+                  user:
+                    type: object
+                    description: Authenticated user information.
+                    properties:
+                      id:
+                        type: string
+                        description: Unique identifier of the user.
+                        example: USER-01
+                      username:
+                        type: string
+                        description: Username of the authenticated user.
+                        example: admin
+                      role:
+                        type: string
+                        description: Role assigned to the user.
+                        example: ADMIN
+                  stores:
+                    type: array
+                    description: List of stores accessible by the user.
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Store unique identifier.
+                          example: store-1
+                        name:
+                          type: string
+                          description: Store name.
+                          example: Store A
+                    example:
+                      - id: store-1
+                        name: Store A
+                      - id: store-2
+                        name: Store B
+        '401':
+          description: Authentication failed due to invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Invalid username or password
+                error: Unauthorized
+                statusCode: 401
+  /auth/select-store:
+    post:
+      tags:
+        - Auth
+      summary: Select active store
+      description: Sets the active store for the authenticated user based on the provided store ID. This determines the context for subsequent requests.
       parameters:
-        - name: inventoryId
-          in: path
+        - in: header
+          name: Authorization
           required: true
           schema:
             type: string
+            example: Bearer jwt-access-token-abc123
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - storeId
+              properties:
+                storeId:
+                  type: string
+                  description: Unique identifier of the store to select.
+                  example: store-1
+      responses:
+        '200':
+          description: Store selected successfully.
+          headers:
+            Set-Cookie:
+              description: HTTP-only cookie containing the refresh token.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  store:
+                    type: object
+                    description: Selected store information.
+                    properties:
+                      accessToken:
+                        type: string
+                        example: Bearer jwt-access-token-abc123
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: user-1
+                          username: 
+                            type: string
+                            example: kelvingiovanno
+                          role:
+                            type: string
+                            example: ADMIN
+                          storeId:
+                            type: string
+                            example: store-1
+        '400':
+          description: 
+            Invalid request payload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: storeId is required
+                error: Bad Request
+                statusCode: 400
+        '401':
+          description: 
+            Unauthorized. User is not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Unauthorized
+                error: Unauthorized
+                statusCode: 401
+        '404':
+          description: 
+            Store not found or not accessible by the user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Store not found
+                error: Not Found
+                statusCode: 404
+  /auth/refresh:
+    post:
+      tags:
+        - Auth
+      summary: Refresh access token
+      description: 
+        Generates a new access token using a valid refresh token stored in a cookie
+        and returns updated authentication tokens.
+
+      parameters:
+        - in: cookie
+          name: refreshToken
+          required: true
+          schema:
+            type: string
+          description: Refresh token stored in HTTP-only cookie
 
       responses:
         '200':
-          description: Inventory data retrieved successfully.
-                
+          description: Successfully refreshed access token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    example: new-access-token
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: user-1
+                      username:
+                        type: string
+                        example: kelvingiovanno
+                      role: 
+                        type: string
+                        example: ADMIN
+                      storeId:
+                        type: string
+                        example: store-1
         '401':
-          description: Missing or invalid access token.
+          description: Invalid or expired refresh token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Unauthorized'
+                $ref: '#/components/schemas/ErrorResponse'
               example:
-                {
-                  "statusCode": 401,
-                  "message": "Unauthorized",
-                } 
+                message: Invalid or expired refresh token
+                error: Unauthorized
+                statusCode: 401              
+  /auth/switch-store:
+    post:
+      tags:
+        - Auth
+      summary: Switch active store
+      description: 
+        Switches the active store for the authenticated user and updates the current session context.
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer access token
+          schema:
+            type: string
+            example: Bearer jwt-access-token
+          
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                storeId:
+                  type: string
+                  example: "store_123"
+              required:
+                - storeId
+
+      responses:
+        '200':
+          description: Store switched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Store switched successfully
+        '401':
+          description: User is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Unauthorized
+                error: Unauthorized
+                statusCode: 401
         '404':
-          description: Inventory not found.
+          description: Store not found or not accesible by user
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NotFound'
+                $ref: '#/components/schemas/ErrorResponse'
               example:
-                {
-                  "message": "Inventory not found",
-                  "statusCode": 404,
-                  "error": "Not found"
-                }
-            
+                message: Store not found
+                error: Not Found
+                statusCode: 404
+  /auth/sign-out:
+    post:
+      tags:
+        - Auth
+      summary: Log out active user
+      description: >
+        Logs out the authenticated user by revoking the current session.
+
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer access token
+          schema:
+            type: string
+            example: Bearer jwt-access-token-abc123
+
+      responses:
+        '200':
+          description: Successfully logged out
+
+        '401':
+          description: Unauthorized
+  /stores:
+    get: 
+      tags:
+        - Store
+      summary: 
+        Get accessible stores
+      description:
+        Retrieves a list of stores that are accesible by authenticated user.
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema: 
+            type: string
+            example: Bearer jwt-access-token
+          
+          
